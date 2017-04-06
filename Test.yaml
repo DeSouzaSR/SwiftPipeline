@@ -1,7 +1,7 @@
 # Inputs for simulation
 
 # Pos-fixed index of the simulation
-suffix_simu: ['A', 'B', 'C', 'D']
+suffix_simu: ['A', 'B', 'C', 'D', 'E']
 
 # Number of clones
 clones_numbers: 5
