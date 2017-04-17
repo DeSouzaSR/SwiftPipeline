@@ -15,52 +15,12 @@ import oe2pv
 #  'Neptune'.
 
 arq = "Mercury.ini" #sys.argv[1]
-
 config = ConfigObj(arq)
 
-# Planet's names
-planets_name = pd.Series(config["planets_name"])
+simulation_name = arq.split(".")[0]
+simulation_input = simulation_name + "_input"
+planets = pd.read_csv(simulation_input + "/planets_ini.csv", index_col = "planets_name")
 
-# Semi-axis [au]
-a = pd.Series([float(i) for i in config["a"]])
-
-# Eccentricity
-e = pd.Series([float(i) for i in config["e"]])
-
-# Inclination [deg]
-i = pd.Series([float(i) for i in config["i"]])
-
-# Long. of ascending node [deg]
-capom = pd.Series([float(i) for i in config["capom"]])
-
-# arg. of peri. [deg]
-omega = pd.Series([float(i) for i in config["omega"]])
-
-# Mean anomaly [deg]
-M = pd.Series([float(i) for i in config["M"]])
-
-# Mass [kg]
-mass = pd.Series([float(i) for i in config["mass"]])
-
-# Equatorial radius [km]
-radio = pd.Series([float(i) for i in config["radio"]])
-
-# Period [days]
-period = pd.Series([float(i) for i in config["period"]])
-
-
-# Create a data frame from data series
-planets = pd.DataFrame({'planets_name': planets_name, 'a': a, 'e': e, \
-	'i': i, 'capom': capom, 'omega': omega, 'M': M, 'mass': mass, \
-	'radio': radio, 'period': period})
-	
-# Make planets_name index
-planets = planets.set_index('planets_name')
-
-# Changing the order of the columns.
-planets = planets[['a', 'e', 'i', 'capom', 'omega', 'M', 'mass', \
-	'radio', 'period']]
-	
 #Create new column, considering G = 1
 # Mass of the Sum, in kg
 mass_sun_kg = 1988500e24
@@ -122,13 +82,12 @@ planets['vx'] = vx
 planets['vy'] = vy
 planets['vz'] = vz
        
-simulation_name = arq.split(".")[0]
+
 simu_suffix = glob(simulation_name + "/" + "*")
-simulation_input = simulation_name + "_input"
-planets.to_csv(simulation_input + "/planets.csv")
+planets.to_csv(simulation_input + "/planets_input.csv")
 
 for i in simu_suffix:
     simu_clone = glob(i + "/" + "*")
     for j in simu_clone:
         with open(j + "/" + "pl.in", "w") as f:
-            f.write("123\n456")
+            f.write("123\n456\n789")
