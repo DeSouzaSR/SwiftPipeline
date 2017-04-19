@@ -1,26 +1,13 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-from glob import glob
-from configobj import ConfigObj
 import numpy as np
 import pandas as pd
 import math
-import oe2pv
+from oe2pv import orbel_el2xv
 
 
-# Create planets data (J2000)
-# 
-# Data from https://nssdc.gsfc.nasa.gov/planetary/
-# Data sequence: 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus',
-#  'Neptune'.
-
-arq = "Mercury.ini" #sys.argv[1]
-config = ConfigObj(arq)
-
-simulation_name = arq.split(".")[0]
-simulation_input = simulation_name + "_input"
-planets = pd.read_csv(simulation_input + "/planets_ini.csv", index_col = "planets_name")
+planets = pd.read_csv("Mercury_input/planets_ini.csv", index_col = "planets_name")
 
 #Create new column, considering G = 1
 # Mass of the Sum, in kg
@@ -67,7 +54,7 @@ vy = np.zeros(len_planets)
 vz = np.zeros(len_planets)
 
 for j in range(len(planets)):
-    x[j], y[j], z[j], vx[j], vy[j], vz[j] = oe2pv.orbel_el2xv(gm[j],\
+    x[j], y[j], z[j], vx[j], vy[j], vz[j] = orbel_el2xv(gm[j],\
 										ialpha, a[j],e[j],\
         									math.radians(inc[j]),\
                                             math.radians(capom[j]),\
@@ -82,13 +69,5 @@ planets['z'] = z
 planets['vx'] = vx
 planets['vy'] = vy
 planets['vz'] = vz
-       
 
-simu_suffix = glob(simulation_name + "/" + "*")
-planets.to_csv(simulation_input + "/planets_input.csv")
-
-for i in simu_suffix:
-    simu_clone = glob(i + "/" + "*")
-    for j in simu_clone:
-        with open(j + "/" + "pl.in", "w") as f:
-            f.write("123\n456\n789")
+print(planets)
